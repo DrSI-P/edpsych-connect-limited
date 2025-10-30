@@ -9,6 +9,14 @@ const nextConfig = {
   typescript: {
     ignoreBuildErrors: true,
   },
+  webpack: (config) => {
+    config.resolve.extensions = ['.tsx', '.ts', '.js', '.jsx', '.json'];
+    config.resolve.extensionAlias = {
+      '.js': ['.tsx', '.ts', '.js'],
+      '.jsx': ['.tsx', '.jsx'],
+    };
+    return config;
+  },
   experimental: {
     serverActions: {
       allowedOrigins: ['localhost:3000', 'vercel.app'],

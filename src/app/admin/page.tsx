@@ -1,9 +1,11 @@
 'use client';
-'use client';
 import React from 'react';
 import dynamic from 'next/dynamic';
 
-const AdminInterface = dynamic(() => import('@/components/admin/AdminInterface.component'), { ssr: false });
+const AdminInterface = dynamic(
+  () => import('@/components/admin/AdminInterface.component'),
+  { ssr: false }
+);
 
 export default function AdminPage() {
   return (
