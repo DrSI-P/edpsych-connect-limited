@@ -1,0 +1,7 @@
+
+# This file signals to Vercel that we want to use the settings from vercel.json
+# and not override them with dashboard settings
+NEXT_FRAMEWORK=true
+BUILD_COMMAND=next build
+OUTPUT_DIRECTORY=.next
+ROOT_DIRECTORY=apps/web-v2

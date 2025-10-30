@@ -1,0 +1,881 @@
+// Unified Prisma Schema for EdPsych AI Platform
+// Production-ready schema preserving existing Course models + comprehensive institutional management
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ==================== NEXT-AUTH MODELS ====================
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+// ==================== CORE USER MODEL ====================
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  roles     String[]
+
+  // Next-Auth relations
+  accounts Account[]
+  sessions Session[]
+
+  // Profile relations
+  profile        Profile?
+  studentProfile StudentProfile?
+  teacherProfile TeacherProfile?
+
+  // Learning & Progress
+  courseEnrollments CourseEnrollment[]
+  assessmentResults AssessmentResult[]
+  achievements      Achievement[]
+
+  // Institutional Management (Research Foundation)
+  institutionId       String?
+  institution         Institution?  @relation("UserInstitution", fields: [institutionId], references: [id])
+  adminInstitutions   Institution[] @relation("InstitutionAdmins")
+  managedInstitutions Institution[] @relation("InstitutionManagers")
+  departments         Department[]  @relation("UserDepartment")
+  managedDepartments  Department[]  @relation("DepartmentManagers")
+  auditLogs           AuditLog[]    @relation("AuditLogPerformedBy")
+
+  // New institutional relations
+  institutionalAccess       Boolean             @default(false)
+  institutionAdminsJunction InstitutionAdmins[] @relation("InstitutionAdminsJunction")
+  departmentMembersJunction DepartmentMembers[] @relation("DepartmentMembersJunction")
+  activities                UserActivity[]      @relation("UserActivities")
+  interests                 UserInterest[]      @relation("UserInterests")
+  communicationLogs         CommunicationLog[]  @relation("CommunicationLogs")
+
+  @@index([email])
+}
+
+// ==================== PROFILE MODELS ====================
+
+model Profile {
+  id     String @id @default(cuid())
+  userId String @unique
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  dateOfBirth DateTime?
+  gender      String?
+  phoneNumber String?
+  addressId   String?   @unique
+  address     Address?  @relation(fields: [addressId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model StudentProfile {
+  id           String   @id @default(cuid())
+  userId       String   @unique
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  schoolId     String?
+  yearGroup    String?
+  subjects     String[]
+  specialNeeds String?
+  upn          String?  @unique
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@index([schoolId])
+  @@index([userId])
+}
+
+model TeacherProfile {
+  id             String   @id @default(cuid())
+  userId         String   @unique
+  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  schoolId       String?
+  subjects       String[]
+  qualifications String[]
+  experience     Int?
+  trn            String?  @unique
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  @@index([schoolId])
+  @@index([userId])
+}
+
+// ==================== COURSE MODELS (PRODUCTION - PRESERVED) ====================
+
+model Course {
+  id                   String             @id
+  title                String
+  description          String
+  longDescription      String
+  category             String
+  level                String
+  duration             Int
+  cpdHours             Int
+  imageUrl             String?
+  instructorId         String
+  status               String             @default("draft")
+  price                Int                @default(0)
+  currency             String             @default("GBP")
+  certificateAvailable Boolean            @default(true)
+  metadata             Json?
+  createdAt            DateTime           @default(now())
+  updatedAt            DateTime
+  Certificate          Certificate[]
+  CourseInstructor     CourseInstructor   @relation(fields: [instructorId], references: [id])
+  CourseEnrollment     CourseEnrollment[]
+  CourseModule         CourseModule[]
+  CourseReview         CourseReview[]
+
+  @@index([category])
+  @@index([instructorId])
+  @@index([level])
+  @@index([status])
+}
+
+model CourseInstructor {
+  id          String   @id
+  name        String
+  title       String
+  bio         String
+  email       String   @unique
+  imageUrl    String?
+  expertise   String[]
+  credentials Json?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime
+  Course      Course[]
+
+  @@index([email])
+}
+
+model CourseModule {
+  id           String         @id
+  courseId     String
+  title        String
+  description  String?
+  orderIndex   Int
+  duration     Int
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime
+  CourseLesson CourseLesson[]
+  Course       Course         @relation(fields: [courseId], references: [id], onDelete: Cascade)
+
+  @@index([courseId])
+  @@index([orderIndex])
+}
+
+model CourseLesson {
+  id             String           @id
+  moduleId       String
+  title          String
+  type           String
+  duration       Int
+  contentUrl     String?
+  content        String?
+  orderIndex     Int
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime
+  CourseModule   CourseModule     @relation(fields: [moduleId], references: [id], onDelete: Cascade)
+  LessonProgress LessonProgress[]
+
+  @@index([moduleId])
+  @@index([orderIndex])
+}
+
+model CourseEnrollment {
+  id             String           @id
+  userId         String
+  courseId       String
+  status         String           @default("active")
+  progress       Int              @default(0)
+  startedAt      DateTime         @default(now())
+  completedAt    DateTime?
+  lastAccessedAt DateTime         @default(now())
+  timeSpent      Int              @default(0)
+  certificateId  String?          @unique
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime
+  Certificate    Certificate?     @relation(fields: [certificateId], references: [id])
+  Course         Course           @relation(fields: [courseId], references: [id])
+  User           User             @relation(fields: [userId], references: [id])
+  LessonProgress LessonProgress[]
+
+  @@unique([userId, courseId])
+  @@index([courseId])
+  @@index([status])
+  @@index([userId])
+}
+
+model LessonProgress {
+  id               String           @id
+  enrollmentId     String
+  lessonId         String
+  completed        Boolean          @default(false)
+  score            Int?
+  timeSpent        Int              @default(0)
+  completedAt      DateTime?
+  createdAt        DateTime         @default(now())
+  updatedAt        DateTime
+  CourseEnrollment CourseEnrollment @relation(fields: [enrollmentId], references: [id], onDelete: Cascade)
+  CourseLesson     CourseLesson     @relation(fields: [lessonId], references: [id])
+
+  @@unique([enrollmentId, lessonId])
+  @@index([enrollmentId])
+  @@index([lessonId])
+}
+
+model Certificate {
+  id               String            @id
+  userId           String
+  courseId         String
+  enrollmentId     String?           @unique
+  issueDate        DateTime          @default(now())
+  completionDate   DateTime
+  verificationCode String            @unique
+  grade            String?
+  skills           String[]
+  metadata         Json?
+  status           String            @default("active")
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime
+  Course           Course            @relation(fields: [courseId], references: [id])
+  CourseEnrollment CourseEnrollment?
+
+  @@index([courseId])
+  @@index([issueDate])
+  @@index([userId])
+  @@index([verificationCode])
+}
+
+model CourseReview {
+  id        String   @id
+  userId    String
+  courseId  String
+  rating    Int
+  comment   String?
+  helpful   Int      @default(0)
+  reported  Boolean  @default(false)
+  status    String   @default("published")
+  createdAt DateTime @default(now())
+  updatedAt DateTime
+  Course    Course   @relation(fields: [courseId], references: [id])
+
+  @@unique([userId, courseId])
+  @@index([courseId])
+  @@index([rating])
+  @@index([status])
+}
+
+model CPDEntry {
+  id          String   @id
+  userId      String
+  date        DateTime
+  activity    String
+  category    String
+  hours       Float
+  provider    String
+  certificate Boolean  @default(false)
+  notes       String?
+  metadata    Json?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime
+
+  @@index([category])
+  @@index([date])
+  @@index([userId])
+}
+
+// ==================== ASSESSMENT MODELS ====================
+
+model Assessment {
+  id        String             @id
+  title     String
+  status    String
+  createdAt DateTime           @default(now())
+  updatedAt DateTime
+  courseId  String
+  results   AssessmentResult[]
+}
+
+model AssessmentResult {
+  id           String     @id
+  assessmentId String
+  userId       String
+  user         User       @relation(fields: [userId], references: [id])
+  answers      Json
+  score        Int?
+  maxScore     Int?
+  feedback     String?
+  completedAt  DateTime?
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime
+  Assessment   Assessment @relation(fields: [assessmentId], references: [id])
+
+  @@unique([assessmentId, userId])
+  @@index([assessmentId])
+  @@index([completedAt])
+  @@index([userId])
+}
+
+// ==================== SCHOOL MODEL ====================
+
+model School {
+  id        String    @id @default(cuid())
+  name      String
+  type      String
+  address   String?
+  city      String?
+  county    String?
+  postcode  String?
+  country   String    @default("UK")
+  phone     String?
+  email     String?
+  website   String?
+  status    String    @default("active")
+  urn       String?   @unique
+  addressId String?   @unique
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  Address   Address[]
+
+  @@index([name])
+  @@index([status])
+  @@index([type])
+}
+
+// ==================== INSTITUTIONAL MANAGEMENT (RESEARCH FOUNDATION) ====================
+
+model Institution {
+  id   String @id @default(cuid())
+  name String
+  type String
+  size String
+
+  // Address
+  address  String?
+  city     String?
+  county   String?
+  postcode String?
+  country  String  @default("UK")
+  region   String?
+
+  // Contact
+  phone   String?
+  email   String?
+  website String?
+  logoUrl String?
+
+  // Status
+  status             String    @default("active")
+  verificationStatus String    @default("pending")
+  isActive           Boolean   @default(true)
+  verifiedAt         DateTime?
+
+  // Metadata
+  notes        String?  @db.Text
+  tags         String[] @default([])
+  customFields Json?
+
+  // Relations
+  departments        Department[]
+  contacts           InstitutionContact[]
+  subscriptions      InstitutionSubscription[]
+  users              User[]                    @relation("UserInstitution")
+  admins             User[]                    @relation("InstitutionAdmins")
+  managers           User[]                    @relation("InstitutionManagers")
+  auditLogs          AuditLog[]
+  performanceMetrics PerformanceMetric[]       @relation("InstitutionMetrics")
+  adminsJunction     InstitutionAdmins[]       @relation("InstitutionAdminsJunction")
+
+  // Audit
+  createdBy String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([name])
+  @@index([status])
+  @@index([type])
+  @@index([verificationStatus])
+}
+
+model Department {
+  id          String  @id @default(cuid())
+  name        String
+  type        String
+  description String? @db.Text
+  status      String  @default("ACTIVE")
+
+  // Hierarchy
+  institutionId      String
+  institution        Institution  @relation(fields: [institutionId], references: [id], onDelete: Cascade)
+  parentDepartmentId String?
+  parentDepartment   Department?  @relation("DepartmentHierarchy", fields: [parentDepartmentId], references: [id])
+  childDepartments   Department[] @relation("DepartmentHierarchy")
+
+  // Head of Department
+  headOfDepartmentId String?
+  headOfDepartment   InstitutionContact? @relation("DepartmentHead", fields: [headOfDepartmentId], references: [id])
+
+  // Status
+  isActive Boolean @default(true)
+
+  // Metadata
+  tags         String[] @default([])
+  customFields Json?
+
+  // Relations
+  users           User[]              @relation("UserDepartment")
+  managers        User[]              @relation("DepartmentManagers")
+  membersJunction DepartmentMembers[] @relation("DepartmentMembersJunction")
+  auditLogs       AuditLog[]
+
+  // Audit
+  createdBy String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([institutionId])
+  @@index([parentDepartmentId])
+  @@index([headOfDepartmentId])
+}
+
+model InstitutionContact {
+  id            String      @id @default(cuid())
+  institutionId String
+  institution   Institution @relation(fields: [institutionId], references: [id], onDelete: Cascade)
+
+  // Contact details
+  firstName String
+  lastName  String
+  email     String
+  phone     String?
+  jobTitle  String?
+  role      String?
+
+  // Flags
+  isPrimaryContact Boolean @default(false)
+
+  // Metadata
+  notes String? @db.Text
+
+  // Relations
+  communicationLogs CommunicationLog[]
+  headedDepartments Department[]       @relation("DepartmentHead")
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([institutionId])
+  @@index([email])
+}
+
+model InstitutionSubscription {
+  id                String      @id @default(cuid())
+  institutionId     String
+  institution       Institution @relation(fields: [institutionId], references: [id], onDelete: Cascade)
+  plan              String
+  status            String      @default("active")
+  tier              String?
+  subscriptionId    String?
+  startDate         DateTime?
+  endDate           DateTime?
+  inTrial           Boolean     @default(false)
+  cancelAtPeriodEnd Boolean     @default(false)
+  metadata          Json?
+
+  // Relations
+  auditLogs AuditLog[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([endDate])
+  @@index([institutionId])
+  @@index([plan])
+  @@index([status])
+}
+
+model AuditLog {
+  id String @id @default(cuid())
+
+  // Action details
+  action      String
+  resource    String? // Legacy field
+  entityType  String
+  entityId    String
+  resourceId  String? // Legacy field
+  description String  @db.Text
+  details     Json? // Legacy field
+
+  // User who performed the action
+  userId        String? // Legacy field
+  performedById String
+  performedBy   User    @relation("AuditLogPerformedBy", fields: [performedById], references: [id])
+
+  // Context
+  institutionId  String?
+  institution    Institution?             @relation(fields: [institutionId], references: [id])
+  departmentId   String?
+  department     Department?              @relation(fields: [departmentId], references: [id])
+  subscriptionId String?
+  subscription   InstitutionSubscription? @relation(fields: [subscriptionId], references: [id])
+
+  // Additional data
+  metadata  Json?
+  ipAddress String?
+  userAgent String?
+  timestamp DateTime @default(now())
+
+  createdAt DateTime @default(now())
+
+  @@index([action])
+  @@index([resource])
+  @@index([performedById])
+  @@index([userId])
+  @@index([institutionId])
+  @@index([departmentId])
+  @@index([entityType, entityId])
+  @@index([timestamp])
+  @@index([createdAt])
+}
+
+// ==================== ADDITIONAL INSTITUTIONAL MODELS ====================
+
+model VolumeDiscountTier {
+  id           String   @id @default(uuid())
+  plan         String
+  minLicenses  Int
+  maxLicenses  Int?
+  discountRate Float
+  description  String?  @db.Text
+  isActive     Boolean  @default(true)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@index([plan])
+  @@index([isActive])
+}
+
+model CommunicationLog {
+  id           String             @id @default(uuid())
+  contactId    String
+  contact      InstitutionContact @relation(fields: [contactId], references: [id])
+  type         String
+  direction    String
+  subject      String?
+  content      String             @db.Text
+  timestamp    DateTime           @default(now())
+  createdById  String
+  createdBy    User               @relation("CommunicationLogs", fields: [createdById], references: [id])
+  followUpDate DateTime?
+  resolved     Boolean            @default(false)
+  attachments  Json?
+  tags         String[]
+  createdAt    DateTime           @default(now())
+  updatedAt    DateTime           @updatedAt
+
+  @@index([contactId])
+  @@index([createdById])
+  @@index([type])
+  @@index([timestamp])
+}
+
+model PerformanceMetric {
+  id            String      @id @default(uuid())
+  institutionId String
+  institution   Institution @relation("InstitutionMetrics", fields: [institutionId], references: [id])
+  metricType    String
+  value         Float
+  unit          String
+  timestamp     DateTime    @default(now())
+  period        String
+  metadata      Json?
+  createdAt     DateTime    @default(now())
+
+  @@index([institutionId])
+  @@index([metricType])
+  @@index([period])
+  @@index([timestamp])
+}
+
+model UserActivity {
+  id           String   @id @default(uuid())
+  userId       String
+  user         User     @relation("UserActivities", fields: [userId], references: [id])
+  activityType String
+  resourceType String?
+  resourceId   String?
+  duration     Int?
+  metadata     Json?
+  timestamp    DateTime @default(now())
+  sessionId    String?
+
+  @@index([userId])
+  @@index([activityType])
+  @@index([resourceType, resourceId])
+  @@index([timestamp])
+}
+
+model UserInterest {
+  id              String   @id @default(uuid())
+  userId          String
+  user            User     @relation("UserInterests", fields: [userId], references: [id])
+  interestArea    String
+  strengthScore   Float
+  source          String
+  firstDetectedAt DateTime @default(now())
+  lastConfirmedAt DateTime @default(now())
+  isActive        Boolean  @default(true)
+  metadata        Json?
+
+  @@index([userId])
+  @@index([interestArea])
+  @@index([source])
+}
+
+model PartnerOrganization {
+  id             String    @id @default(uuid())
+  name           String
+  type           String
+  contactName    String?
+  contactEmail   String?
+  contactPhone   String?
+  website        String?
+  partnerSince   DateTime  @default(now())
+  status         String    @default("ACTIVE")
+  referralCode   String?   @unique
+  referralCount  Int       @default(0)
+  commissionRate Float?
+  paymentDetails Json?
+  agreementUrl   String?
+  notes          String?   @db.Text
+  lastReviewDate DateTime?
+  nextReviewDate DateTime?
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  @@index([type])
+  @@index([status])
+  @@index([referralCode])
+}
+
+model InstitutionAdmins {
+  institutionId String
+  institution   Institution @relation("InstitutionAdminsJunction", fields: [institutionId], references: [id], onDelete: Cascade)
+  userId        String
+  user          User        @relation("InstitutionAdminsJunction", fields: [userId], references: [id], onDelete: Cascade)
+  assignedAt    DateTime    @default(now())
+
+  @@id([institutionId, userId])
+  @@index([institutionId])
+  @@index([userId])
+}
+
+model DepartmentMembers {
+  departmentId String
+  department   Department @relation("DepartmentMembersJunction", fields: [departmentId], references: [id], onDelete: Cascade)
+  userId       String
+  user         User       @relation("DepartmentMembersJunction", fields: [userId], references: [id], onDelete: Cascade)
+  joinedAt     DateTime   @default(now())
+
+  @@id([departmentId, userId])
+  @@index([departmentId])
+  @@index([userId])
+}
+
+// ==================== BETA TESTING & LEGAL ====================
+
+model BetaAccessCode {
+  id            String    @id
+  code          String    @unique
+  expiresAt     DateTime?
+  maxUses       Int       @default(1)
+  remainingUses Int       @default(1)
+  role          String    @default("BETA_TESTER")
+  features      String[]
+  metadata      Json?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime
+
+  @@index([code])
+  @@index([expiresAt])
+  @@index([remainingUses])
+}
+
+model BetaAccessCodeUsage {
+  id           String   @id
+  accessCodeId String
+  userId       String
+  usedAt       DateTime @default(now())
+
+  @@index([accessCodeId])
+  @@index([usedAt])
+  @@index([userId])
+}
+
+model BetaTester {
+  id                         String    @id
+  userId                     String    @unique
+  accessCode                 String
+  status                     String    @default("active")
+  registeredAt               DateTime  @default(now())
+  lastUpdated                DateTime
+  features                   Json?
+  expiresAt                  DateTime?
+  confidentialitySignatureId String?
+
+  @@index([expiresAt])
+  @@index([status])
+  @@index([userId])
+}
+
+model LegalDocument {
+  id            String   @id
+  type          String
+  version       String
+  title         String
+  content       String
+  status        String   @default("draft")
+  effectiveDate DateTime
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime
+
+  @@index([effectiveDate])
+  @@index([status])
+  @@index([type])
+}
+
+model LegalSignature {
+  id               String    @id
+  userId           String
+  agreementType    String
+  agreementVersion String
+  signatureData    String
+  ipAddress        String?
+  userAgent        String?
+  signedAt         DateTime  @default(now())
+  revokedAt        DateTime?
+  status           String    @default("active")
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime
+
+  @@index([agreementType])
+  @@index([status])
+  @@index([userId])
+}
+
+// ==================== HELPER MODELS ====================
+
+model Address {
+  id       String  @id @default(cuid())
+  line1    String
+  line2    String?
+  town     String
+  county   String?
+  postcode String
+  country  String  @default("United Kingdom")
+
+  school   School?  @relation(fields: [schoolId], references: [id])
+  profile  Profile?
+  schoolId String?
+}
+
+model RestorativeIncident {
+  id                   String   @id
+  title                String
+  type                 String
+  participants         String
+  description          String
+  severity             String
+  location             String?
+  dateTime             DateTime
+  initialApproach      String?
+  desiredOutcomes      String?
+  status               String   @default("open")
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime
+  notes                Json?
+  metrics              Json?
+  recommendedTemplates Json?
+
+  @@index([dateTime])
+  @@index([status])
+  @@index([type])
+}
+
+model SecureDocument {
+  id        String   @id
+  path      String   @unique
+  content   String
+  metadata  Json?
+  createdAt DateTime @default(now())
+  updatedAt DateTime
+
+  @@index([path])
+}
+
+model UserPreference {
+  id        String   @id
+  userId    String
+  category  String
+  type      String
+  value     Json
+  createdAt DateTime @default(now())
+  updatedAt DateTime
+
+  @@index([category])
+  @@index([type])
+  @@index([userId])
+}
+
+// ==================== GAMIFICATION ====================
+
+model Achievement {
+  id          String   @id @default(cuid())
+  name        String
+  description String
+  category    String
+  points      Int      @default(10)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  earnedBy    User[]
+}
