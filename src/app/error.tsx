@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { ErrorDisplay } from '../components/error-handling/ErrorDisplay';
-import { Button } from '@/components/ui/button';
+import { Button } from '@/components/ui/button.tsx';
 import { RefreshCw } from 'lucide-react';
 
 /**

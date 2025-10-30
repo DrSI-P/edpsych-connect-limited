@@ -3,7 +3,7 @@ import React from 'react';
 import dynamic from 'next/dynamic';
 
 const AdminInterface = dynamic(
-  () => import('@/components/admin/AdminInterface.component'),
+  () => import('@/components/admin/AdminInterface.component.tsx'),
   { ssr: false }
 );
 

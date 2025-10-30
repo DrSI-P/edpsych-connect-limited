@@ -1,6 +1,6 @@
 'use client';
 import React from 'react';
-import TutoringInterface from '@/components/ai-agents/TutoringInterface';
+import TutoringInterface from '@/components/ai-agents/TutoringInterface.tsx';
 
 export default function AIAgentsPage() {
   return (

@@ -1,6 +1,6 @@
 'use client';
 import React from 'react';
-import RecommendationDashboard from '@/components/recommendations/RecommendationDashboard';
+import RecommendationDashboard from '@/components/recommendations/RecommendationDashboard.tsx';
 
 export default function AlgorithmsPage() {
   return (
