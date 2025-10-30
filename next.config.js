@@ -1,3 +1,5 @@
+const path = require('path');
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
@@ -10,11 +12,18 @@ const nextConfig = {
     ignoreBuildErrors: true,
   },
   webpack: (config) => {
+    // Add alias resolution for @/ to point to src/
+    config.resolve.alias = {
+      ...config.resolve.alias,
+      '@': path.resolve(__dirname, 'src'),
+    };
+    
     config.resolve.extensions = ['.tsx', '.ts', '.js', '.jsx', '.json'];
     config.resolve.extensionAlias = {
       '.js': ['.tsx', '.ts', '.js'],
       '.jsx': ['.tsx', '.jsx'],
     };
+    
     return config;
   },
   experimental: {
