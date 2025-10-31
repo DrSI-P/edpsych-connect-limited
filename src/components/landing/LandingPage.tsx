@@ -536,11 +536,11 @@ export default function LandingPage() {
                   </p>
 
                   <p>
-                    Dr Scott Ighavongbe-Patrick brings a unique perspective to educational psychology, shaped by a non-traditional journey that began in warehouse operations and evolved through a deep commitment to understanding and amplifying children's voices in education.
+                    Dr Scott Ighavongbe-Patrick brings a unique perspective to educational psychology, shaped by a non-traditional journey that began in FMCG operations management and evolved through a deep commitment to understanding and amplifying children's voices in education.
                   </p>
 
                   <p>
-                    After completing his First Class Honours degree in Psychology at Buckinghamshire New University and doctoral training at Southampton University, Scott has worked across multiple local authorities including Buckinghamshire Council and Achieving for Children, conducting comprehensive EHC Needs Assessments and developing evidence-based interventions for vulnerable learners.
+                    After completing his First Class Honours degree in Psychology at Buckinghamshire New University and doctoral training at Southampton University, Scott has worked across multiple local authorities including Berkshire, Buckinghamshire, Hertfordshire, Leicestershire, Worcestershire, conducting comprehensive Needs Assessments and developing evidence-based interventions for vulnerable learners.
                   </p>
 
                   <div className="bg-indigo-50 border-l-4 border-indigo-600 p-4 rounded italic">
