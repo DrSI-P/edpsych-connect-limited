@@ -26,7 +26,7 @@ import Footer from './Footer';
 /**
  * EdPsych Connect World - Market-Ready Landing Page
  * 
- * Authentic positioning: Human expertise refined over 15+ years,
+ * Authentic positioning: Human expertise refined over a decade,
  * made accessible to every UK school through intelligent technology.
  * 
  * Key messaging:
@@ -51,7 +51,7 @@ export default function LandingPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
             <div>
-              <div className="text-3xl font-bold text-slate-900">15+</div>
+              <div className="text-3xl font-bold text-slate-900">10+</div>
               <div className="text-sm text-slate-600">Years EP Experience</div>
             </div>
             <div>
@@ -64,7 +64,7 @@ export default function LandingPage() {
             </div>
             <div>
               <div className="text-3xl font-bold text-slate-900">DEdPsych</div>
-              <div className="text-sm text-slate-600">HCPC Registered</div>
+              <div className="text-sm text-slate-600">HCPC PYL042340</div>
             </div>
           </div>
         </div>
@@ -205,81 +205,188 @@ export default function LandingPage() {
       {/* Founder Story - Authentic Credibility */}
       <section className="py-20 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid md:grid-cols-2 gap-12 items-center">
-            <div>
-              <div className="inline-flex items-center gap-2 bg-blue-100 text-blue-700 px-4 py-2 rounded-full text-sm font-medium mb-4">
-                <Shield className="w-4 h-4" />
-                Founded by Educational Psychologist
+          {/* Section Header */}
+          <div className="text-center mb-16">
+            <div className="inline-flex items-center gap-2 bg-blue-100 text-blue-700 px-4 py-2 rounded-full text-sm font-medium mb-4">
+              <Shield className="w-4 h-4" />
+              Founded by Educational Psychologist
+            </div>
+            <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-4">
+              Human Expertise, Refined Over Decades
+            </h2>
+            <p className="text-xl text-slate-600 max-w-3xl mx-auto">
+              Over a decade of frontline educational psychology practice, 
+              backed by rigorous academic research and mentorship from 
+              leading developmental psychologists.
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-2 gap-12 items-start mb-16">
+            {/* Photo and Credentials */}
+            <div className="space-y-6">
+              {/* Graduation Photo */}
+              <div className="relative rounded-2xl overflow-hidden shadow-2xl">
+                <img 
+                  src="/images/scott-and-dr-worth-graduation.jpg" 
+                  alt="Dr Scott Ighavongbe-Patrick with mentor Dr Piers Worth at DEdPsych graduation ceremony, University of Southampton"
+                  className="w-full h-auto"
+                />
+                <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-6">
+                  <p className="text-white text-sm">
+                    <strong>Dr Scott Ighavongbe-Patrick</strong> with mentor 
+                    <strong> Dr Piers Worth</strong> at DEdPsych graduation, 
+                    University of Southampton
+                  </p>
+                </div>
               </div>
-              <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-6">
-                Human Expertise, Refined Over Decades
-              </h2>
-              <p className="text-lg text-slate-600 mb-6">
-                Dr Scott Ighavongbe-Patrick (DEdPsych, CPsychol) spent 15+ years 
-                as an educational psychologist across multiple UK local authorities. 
-                Every recommendation in this platform is grounded in evidence-based 
-                practice, refined through thousands of real-world interventions.
-              </p>
-              <p className="text-lg text-slate-600 mb-6">
-                "I watched talented teachers burn out trying to meet impossible 
-                demands. I saw brilliant students failed by one-size-fits-all 
-                approaches. This platform delivers the specialist knowledge every 
-                teacher needs—available instantly, adapted perfectly, without the 
-                impossible wait times."
-              </p>
-              <div className="flex items-center gap-4 text-sm text-slate-600">
-                <div>✓ HCPC Registered</div>
-                <div>✓ DEdPsych, Southampton</div>
-                <div>✓ 15+ Years LA Experience</div>
+
+              {/* Credentials Grid */}
+              <div className="grid grid-cols-2 gap-4">
+                <div className="bg-blue-50 p-4 rounded-xl text-center">
+                  <div className="text-2xl font-bold text-blue-600">DEdPsych</div>
+                  <div className="text-sm text-slate-600">University of Southampton</div>
+                </div>
+                <div className="bg-purple-50 p-4 rounded-xl text-center">
+                  <div className="text-2xl font-bold text-purple-600">CPsychol</div>
+                  <div className="text-sm text-slate-600">Chartered Psychologist</div>
+                </div>
+                <div className="bg-green-50 p-4 rounded-xl text-center">
+                  <div className="text-2xl font-bold text-green-600">HCPC</div>
+                  <div className="text-sm text-slate-600">PYL042340</div>
+                </div>
+                <div className="bg-orange-50 p-4 rounded-xl text-center">
+                  <div className="text-2xl font-bold text-orange-600">10+</div>
+                  <div className="text-sm text-slate-600">Years LA Experience</div>
+                </div>
               </div>
             </div>
 
-            <div className="bg-gradient-to-br from-blue-50 to-purple-50 p-8 rounded-2xl">
-              <div className="space-y-6">
-                <div className="flex items-start gap-4">
-                  <div className="w-12 h-12 bg-blue-600 rounded-lg flex items-center justify-center flex-shrink-0">
-                    <MessageCircle className="w-6 h-6 text-white" />
-                  </div>
-                  <div>
-                    <h4 className="font-semibold text-slate-900 mb-1">
-                      535+ Evidence-Based Capabilities
-                    </h4>
-                    <p className="text-sm text-slate-600">
-                      Every tool, intervention, and recommendation backed by 
-                      peer-reviewed research and real-world effectiveness.
-                    </p>
-                  </div>
-                </div>
+            {/* Story and Mentorship */}
+            <div className="space-y-6">
+              <div>
+                <h3 className="text-2xl font-bold text-slate-900 mb-4">
+                  From Frontline Practice to Platform Innovation
+                </h3>
+                <p className="text-lg text-slate-600 mb-4">
+                  Dr Scott Ighavongbe-Patrick (DEdPsych, CPsychol, HCPC PYL042340) 
+                  spent over a decade as an educational psychologist across multiple 
+                  UK local authorities. Every recommendation in this platform is 
+                  grounded in evidence-based practice, refined through thousands of 
+                  real-world interventions.
+                </p>
+                <p className="text-lg text-slate-600 mb-4">
+                  "I watched talented teachers burn out trying to meet impossible 
+                  demands. I saw brilliant students failed by one-size-fits-all 
+                  approaches. This platform delivers the specialist knowledge every 
+                  teacher needs—available instantly, adapted perfectly, without the 
+                  impossible wait times."
+                </p>
+              </div>
 
-                <div className="flex items-start gap-4">
-                  <div className="w-12 h-12 bg-purple-600 rounded-lg flex items-center justify-center flex-shrink-0">
-                    <Heart className="w-6 h-6 text-white" />
+              {/* Mentor Section */}
+              <div className="bg-gradient-to-br from-blue-50 to-purple-50 p-6 rounded-2xl border border-blue-200">
+                <div className="flex items-start gap-4 mb-4">
+                  <div className="w-12 h-12 bg-blue-600 rounded-full flex items-center justify-center flex-shrink-0">
+                    <Users className="w-6 h-6 text-white" />
                   </div>
                   <div>
-                    <h4 className="font-semibold text-slate-900 mb-1">
-                      Designed for Real Schools
+                    <h4 className="font-bold text-slate-900 mb-1">
+                      Mentored by Leading Developmental Psychologist
                     </h4>
-                    <p className="text-sm text-slate-600">
-                      Built by someone who understands the daily reality of UK 
-                      classrooms, not Silicon Valley tech assumptions.
+                    <p className="text-sm text-slate-700 font-medium mb-2">
+                      Dr Piers Worth, PhD - Chartered Psychologist (BPS)
                     </p>
                   </div>
                 </div>
+                <p className="text-sm text-slate-600 leading-relaxed">
+                  Dr Piers Worth taught developmental and positive psychology at 
+                  undergraduate and masters level at Buckinghamshire New University 
+                  for 11 years prior to his retirement in 2019. He managed the 
+                  psychology team for five years and developed the university's 
+                  MSc in Applied Positive Psychology, recruiting students from 
+                  across the world. Dr Worth served as mentor and adviser to 
+                  Dr Scott I-Patrick throughout his doctoral research.
+                </p>
+              </div>
 
-                <div className="flex items-start gap-4">
-                  <div className="w-12 h-12 bg-green-600 rounded-lg flex items-center justify-center flex-shrink-0">
-                    <Shield className="w-6 h-6 text-white" />
+              {/* Key Differentiators */}
+              <div className="space-y-3">
+                <div className="flex items-start gap-3">
+                  <div className="w-6 h-6 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
+                    <span className="text-green-600 font-bold">✓</span>
                   </div>
                   <div>
-                    <h4 className="font-semibold text-slate-900 mb-1">
-                      Professional Standards
-                    </h4>
-                    <p className="text-sm text-slate-600">
-                      HCPC Code of Conduct compliant. GDPR secure. 
-                      Designed to support, never replace, human professionals.
-                    </p>
+                    <div className="font-semibold text-slate-900">535+ Evidence-Based Capabilities</div>
+                    <div className="text-sm text-slate-600">Every tool backed by peer-reviewed research and real-world effectiveness</div>
                   </div>
                 </div>
+                
+                <div className="flex items-start gap-3">
+                  <div className="w-6 h-6 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
+                    <span className="text-green-600 font-bold">✓</span>
+                  </div>
+                  <div>
+                    <div className="font-semibold text-slate-900">Built for Real UK Classrooms</div>
+                    <div className="text-sm text-slate-600">Designed by someone who understands daily reality of UK schools, not tech assumptions</div>
+                  </div>
+                </div>
+                
+                <div className="flex items-start gap-3">
+                  <div className="w-6 h-6 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
+                    <span className="text-green-600 font-bold">✓</span>
+                  </div>
+                  <div>
+                    <div className="font-semibold text-slate-900">HCPC Code of Conduct Compliant</div>
+                    <div className="text-sm text-slate-600">Professional standards maintained. Designed to support, never replace, human professionals</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Research Foundation */}
+          <div className="bg-gradient-to-br from-slate-50 to-blue-50 rounded-2xl p-8 border border-slate-200">
+            <div className="text-center mb-8">
+              <h3 className="text-2xl font-bold text-slate-900 mb-2">
+                Built on Rigorous Academic Research
+              </h3>
+              <p className="text-slate-600">
+                Doctoral research on educational exclusion informs every aspect of the platform
+              </p>
+            </div>
+            
+            <div className="grid md:grid-cols-3 gap-6">
+              <div className="bg-white p-6 rounded-xl border border-slate-200">
+                <div className="text-3xl mb-3">🎓</div>
+                <h4 className="font-semibold text-slate-900 mb-2">
+                  Doctoral Research Focus
+                </h4>
+                <p className="text-sm text-slate-600">
+                  Educational exclusion, restorative practices, and preventative 
+                  interventions for vulnerable learners
+                </p>
+              </div>
+              
+              <div className="bg-white p-6 rounded-xl border border-slate-200">
+                <div className="text-3xl mb-3">📊</div>
+                <h4 className="font-semibold text-slate-900 mb-2">
+                  Evidence-Based Practice
+                </h4>
+                <p className="text-sm text-slate-600">
+                  Every feature grounded in positive psychology, developmental 
+                  theory, and proven educational interventions
+                </p>
+              </div>
+              
+              <div className="bg-white p-6 rounded-xl border border-slate-200">
+                <div className="text-3xl mb-3">🏫</div>
+                <h4 className="font-semibold text-slate-900 mb-2">
+                  Real-World Validation
+                </h4>
+                <p className="text-sm text-slate-600">
+                  Tested across multiple UK local authorities, refined through 
+                  thousands of student and teacher interactions
+                </p>
               </div>
             </div>
           </div>

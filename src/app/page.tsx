@@ -6,7 +6,7 @@ import LandingPage from '@/components/landing/LandingPage';
 
 export const metadata: Metadata = {
   title: 'EdPsych Connect World | Transform UK SEND Support',
-  description: 'Proven educational psychology expertise, refined over 15+ years, now accessible to every UK school. Battle Royale gamification meets evidence-based SEND interventions.',
+  description: 'Proven educational psychology expertise, refined over a decade, now accessible to every UK school. Battle Royale gamification meets evidence-based SEND interventions. HCPC PYL042340.',
   keywords: [
     'UK SEND support',
     'educational psychology',
@@ -18,17 +18,19 @@ export const metadata: Metadata = {
     'special educational needs',
     'inclusive education',
     'EdPsych services',
+    'HCPC registered psychologist',
+    'DEdPsych',
   ],
   openGraph: {
     title: 'EdPsych Connect World | Transform UK SEND Support',
-    description: 'Human expertise, refined over decades, made accessible to every school, every day.',
+    description: 'Human expertise, refined over decades, made accessible to every school, every day. Founded by HCPC registered Educational Psychologist.',
     type: 'website',
     locale: 'en_GB',
   },
   twitter: {
     card: 'summary_large_image',
     title: 'EdPsych Connect World',
-    description: 'Transform UK SEND support with proven educational psychology expertise.',
+    description: 'Transform UK SEND support with proven educational psychology expertise. HCPC PYL042340.',
   },
 };
 
