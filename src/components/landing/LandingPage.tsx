@@ -128,7 +128,7 @@ export default function LandingPage() {
               </div>
               
               <h1 className="text-5xl lg:text-6xl font-bold text-slate-900 mb-6 leading-tight">
-                Expert SEND Support{' '}
+                Readily Available SEND Support{' '}
                 <span className="bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
                   For Every School, Every Day
                 </span>
